@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header
 from enum import Enum
-from typing import Literal
+from typing import Literal, Union
 from pydantic import BaseModel, Field,HttpUrl, EmailStr
 
 
@@ -74,15 +74,15 @@ class BaseItem(BaseModel):
     type:str
 
 class CarItem(BaseItem):
-    type: "car"
+    type: str = "car"
     
 class PlaneItem(BaseItem):
-    type: "plane"
-    size: "int"
+    type: str = "plane"
+    size: int
     
     
 items = {
-    "itme1": {"description": "items is in the description", "type":"car"},
+    "item1": {"description": "items is in the description", "type":"car"},
     "item2": {
         "description": "Music is my aeroplane",
         "type": "plane",
@@ -90,5 +90,6 @@ items = {
     }
 }
 
-@app.get("/items/{item_id}", response_model=Union(PlaneItem, CarItem))
-async def
+@app.get("/items/{item_id}", response_model=Union[PlaneItem, CarItem])
+async def read_item(item_id :str):
+    return items[item_id]
